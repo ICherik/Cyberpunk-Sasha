@@ -10,7 +10,7 @@
 <br>
 
 <p align="center">
-  <img src="./sasha.jpg" alt="Sasha Project Demo" width="800"/>
+  <img src="https://imgur.com/a/Ufeigd6" alt="Sasha Project Demo" width="800"/>
 </p>
 
 ## 📜 درباره پروژه
@@ -54,7 +54,7 @@
 
 * **Email:** [aghacherik@gmail.com](mailto:aghacherik@gmail.com)
 * **Instagram:** [@ilcherik](https://www.instagram.com/ilcherik)
-* **Website:** [https://resume-nine-xi-24.vercel.app/]
+* **Website:** [Website](https://resume-nine-xi-24.vercel.app/)
 
 <br>
 
