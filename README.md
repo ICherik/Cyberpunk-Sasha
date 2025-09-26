@@ -10,7 +10,7 @@
 <br>
 
 <p align="center">
-  <img src="./path/to/your/image.jpg" alt="Sasha Project Demo" width="800"/>
+  <img src="./banner.png" alt="Sasha Project Demo" width="800"/>
 </p>
 
 ## 📜 درباره پروژه
