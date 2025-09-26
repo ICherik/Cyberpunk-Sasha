@@ -10,7 +10,7 @@
 <br>
 
 <p align="center">
-  <img src="./banner.png" alt="Sasha Project Demo" width="800"/>
+  <img src="./sasha.jpg" alt="Sasha Project Demo" width="800"/>
 </p>
 
 ## 📜 درباره پروژه
@@ -40,7 +40,7 @@
 
 1.  مخزن پروژه را کلون کنید:
     ```sh
-    git clone [https://github.com/](https://github.com/)ICherik/sasha-cyberpunk-portfolio.git
+    git clone https://github.com/ICherik/Cyberpunk-Sasha
     ```
 2.  فایل `index.html` را در مرورگر خود باز کنید.
 
