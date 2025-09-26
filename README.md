@@ -10,7 +10,7 @@
 <br>
 
 <p align="center">
-  <img src="https://imgur.com/a/Ufeigd6" alt="Sasha Project Demo" width="800"/>
+  <img src="https://i.imgur.com/S58rFdW.jpeg" alt="Sasha Project Demo" width="800"/>
 </p>
 
 ## 📜 درباره پروژه
