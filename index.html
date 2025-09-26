@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.A.S.H.A. // Secure Node [FINAL]</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+
+        :root {
+            --base-bg: #050508;
+            --primary-color: #e0e0e0;
+            --accent-color: #00ffff;
+            --danger-color: #ff1b1b;
+            --font-primary: 'Poppins', sans-serif;
+            --font-mono: 'Roboto Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--base-bg);
+            font-family: var(--font-primary);
+            color: var(--primary-color);
+            overflow-x: hidden;
+            position: relative;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: transparent;
+            pointer-events: none;
+            z-index: 9999;
+            animation: grain 8s steps(10) infinite;
+        }
+
+        @keyframes grain {
+          0%, 100% { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); opacity: 0.03; }
+          10% { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); opacity: 0.04; }
+          40% { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); opacity: 0.02; }
+          60% { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); opacity: 0.03; }
+        }
+
+        .custom-cursor { display: none; }
+
+        @media (pointer: fine) {
+            .custom-cursor {
+                display: block;
+                position: fixed;
+                width: 20px;
+                height: 20px;
+                border: 1px solid var(--primary-color);
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                pointer-events: none;
+                z-index: 10000;
+                transition: transform 0.2s ease-out, background-color 0.2s ease;
+            }
+            * { cursor: none; }
+        }
+
+        header { position: fixed; top: 0; left: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; z-index: 100; background-color: rgba(10, 10, 15, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .logo { font-family: var(--font-mono); font-size: 1.5rem; color: var(--primary-color); text-decoration: none; text-shadow: 0 0 5px var(--accent-color); }
+        .nav-links { list-style: none; display: flex; gap: 30px; }
+        .nav-links a { color: var(--primary-color); text-decoration: none; font-size: 1rem; position: relative; }
+
+        .hero { position: relative; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        
+        #rain-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .hero-bg { position: absolute; top: -5vh; left: -5vw; width: 110vw; height: 110vh; background: url('./banner.png') no-repeat center center; background-size: cover; z-index: 1; }
+        .hero-vignette { position: absolute; inset: 0; box-shadow: inset 0 0 250px 100px rgba(5, 5, 8, 1); z-index: 3; animation: pulse-vignette 10s ease-in-out infinite; }
+        @keyframes pulse-vignette { 50% { box-shadow: inset 0 0 250px 120px rgba(15, 5, 8, 1); } }
+
+        .hero-content { position: relative; z-index: 4; max-width: 700px; text-align: center; padding: 20px; }
+        .hero-content h1 { font-family: var(--font-mono); font-size: 1.2rem; color: var(--accent-color); margin-bottom: 20px; text-shadow: 0 0 10px var(--accent-color), 0 0 8px rgba(0,0,0,1); }
+        .hero-content p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 30px; color: rgba(224, 224, 224, 0.95); text-shadow: 0 0 5px rgba(0,0,0,1), 0 0 8px rgba(0,0,0,1); }
+        .action-buttons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+
+        .btn, .nav-links a { font-family: var(--font-mono); padding: 12px 25px; border: 1px solid var(--primary-color); background-color: transparent; color: var(--primary-color); text-decoration: none; font-size: 0.9rem; letter-spacing: 1px; position: relative; overflow: hidden; transition: color 0.2s ease-in-out; }
+        .nav-links a { border: none; padding: 5px; }
+        @media (pointer: fine) { .btn:hover, .nav-links a:hover { color: var(--danger-color); animation: glitch-anim 0.3s steps(2, end) both; } }
+        .btn:hover::before, .nav-links a:hover::before { content: attr(data-text); position: absolute; top: 0; left: -2px; width: 100%; background-color: transparent; text-shadow: -2px 0 var(--danger-color); clip-path: inset(50% 0 50% 0); }
+        @keyframes glitch-anim { 0% { transform: skewX(0); } 20% { transform: skewX(-5deg); text-shadow: 2px 0 var(--danger-color); } 40% { transform: skewX(5deg); text-shadow: -2px 0 var(--accent-color); } 60% { transform: skewX(-3deg); } 80% { transform: skewX(3deg); } 100% { transform: skewX(0); } }
+        
+        .hero-separator { width: 80%; height: 1px; margin: 0 auto; background-color: rgba(0, 255, 255, 0.3); box-shadow: 0 0 15px rgba(0, 255, 255, 0.3); position: relative; overflow: hidden; }
+        .hero-separator::after { content: ''; position: absolute; top: 0; left: 0; width: 100px; height: 100%; background: #fff; filter: blur(5px); animation: separator-scan 5s linear infinite; }
+        @keyframes separator-scan { 0% { transform: translateX(-100px); } 100% { transform: translateX(calc(80vw + 100px)); } }
+
+        .content-section { padding: 120px 8%; max-width: 1400px; margin: 0 auto; }
+        .section-title { font-family: var(--font-mono); font-size: 2.5rem; text-align: center; margin-bottom: 60px; color: var(--accent-color); text-shadow: 0 0 10px var(--accent-color); letter-spacing: 2px; }
+        
+        .inventory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .implant-card { border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(10, 10, 15, 0.3); padding: 25px; transition: background 0.3s ease, border-color 0.3s ease; }
+        .implant-card:hover { background: rgba(15, 15, 20, 0.5); border-color: var(--accent-color); }
+        .implant-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 15px; }
+        .implant-header h3 { font-family: var(--font-mono); font-size: 1.3rem; color: var(--primary-color); }
+        .status { font-family: var(--font-mono); font-size: 0.8rem; padding: 3px 8px; }
+        .status.available { color: var(--accent-color); border: 1px solid var(--accent-color); }
+        .status.volatile { color: var(--danger-color); border: 1px solid var(--danger-color); }
+        .status.request { color: #f0f000; border: 1px solid #f0f000; }
+        .implant-card p { font-size: 0.9rem; line-height: 1.7; color: rgba(224, 224, 224, 0.7); }
+
+        .dossier-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 50px; align-items: center; margin-bottom: 150px; }
+        .dossier-image { width: 100%; height: 400px; background:url('./dossier.png'); background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.1); }
+        .dossier-text h3 { font-size: 1.8rem; margin-bottom: 20px; color: var(--primary-color); }
+        .dossier-text p { color: rgba(224, 224, 224, 0.8); line-height: 1.9; margin-bottom: 15px; }
+
+        .terminal { border: 1px solid rgba(255,255,255,0.2); background: #0a0a0f; padding: 30px; font-family: var(--font-mono); }
+        .terminal-header { padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.2); color: var(--danger-color); }
+        .terminal-line { margin-bottom: 10px; }
+        .terminal-line > span { color: var(--accent-color); }
+        
+        footer { padding: 30px 5%; background: #0a0a0f; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.8rem; }
+        .footer-status span { color: var(--danger-color); animation: blink 1.5s steps(1, end) infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .footer-key { color: rgba(255, 255, 255, 0.5); }
+        
+        .anim-element { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .anim-element.is-visible { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            header { justify-content: center; }
+            .hero-content h1 { font-size: 1rem; }
+            .hero-content p { font-size: 1rem; }
+            .dossier-grid { grid-template-columns: 1fr; }
+            .dossier-image { height: 250px; margin-bottom: 30px; }
+            .section-title { font-size: 1.8rem; }
+            footer { flex-direction: column; gap: 15px; text-align: center; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="custom-cursor"></div>
+
+    <header>
+        <a href="#" class="logo" data-text="// S.A.S.H.A.">// S.A.S.H.A.</a>
+        <ul class="nav-links">
+            <li><a href="#inventory" data-text="[INVENTORY]">[INVENTORY]</a></li>
+            <li><a href="#dossier" data-text="[DOSSIER]">[DOSSIER]</a></li>
+            <li><a href="#comms-link" data-text="[COMMS-LINK]">[COMMS-LINK]</a></li>
+        </ul>
+    </header>
+
+    <main>
+        <section class="hero">
+            <canvas id="rain-canvas"></canvas>
+            <div class="hero-bg"></div>
+            <div class="hero-vignette"></div>
+            <div class="hero-content">
+                <h1>// ACCESSING UNSTABLE NODE: S.A.S.H.A.</h1>
+                <p>They call her a whisper in the static, a glitch in the system. In the underbelly of this city, where chrome corrupts flesh, Sasha is the master artist. She deals in upgrades the corporations won't sanction and the authorities can't trace. Each piece of tech is a masterpiece of illegal engineering—a promise of power, for a price. Welcome to the fringe. Welcome to the future you were never supposed to have.</p>
+                <div class="action-buttons">
+                    <a href="#inventory" class="btn" data-text="[VIEW CLASSIFIED INVENTORY]">[VIEW CLASSIFIED INVENTORY]</a>
+                    <a href="#comms-link" class="btn" data-text="[ESTABLISH SECURE COMMS]">[ESTABLISH SECURE COMMS]</a>
+                </div>
+            </div>
+        </section>
+        
+        <div class="hero-separator anim-element"></div>
+
+        <section id="inventory" class="content-section">
+            <h2 class="section-title anim-element">// CLASSIFIED INVENTORY</h2>
+            <div class="inventory-grid">
+                <div class="implant-card anim-element" style="transition-delay: 0.1s;"><div class="implant-header"><h3>Keres-II Optics</h3><span class="status available">Available</span></div><p>Military-grade optical implant. See through walls, track thermal signatures. They'll never see you coming. Guaranteed untraceable firmware.</p></div>
+                <div class="implant-card anim-element" style="transition-delay: 0.2s;"><div class="implant-header"><h3>Sub-dermal Plating</h3><span class="status request">On Request</span></div><p>Woven micro-fiber plating fused to your skeleton. Stops a 9mm round cold. Minor nerve degradation is... possible.</p></div>
+                <div class="implant-card anim-element" style="transition-delay: 0.3s;"><div class="implant-header"><h3>'Nyx' Stealth Chip</h3><span class="status volatile">Volatile</span></div><p>Experimental sound-dampening and light-bending implant. Become a shadow. Side effects include mild dissociation from reality. Handle with care.</p></div>
+                <div class="implant-card anim-element" style="transition-delay: 0.4s;"><div class="implant-header"><h3>Adrenal Pump v3</h3><span class="status available">Available</span></div><p>Trigger a combat-cocktail of stimulants directly into your bloodstream. Heightened reflexes, suppressed pain. Extended use not recommended.</p></div>
+                <div class="implant-card anim-element" style="transition-delay: 0.5s;"><div class="implant-header"><h3>Synaptic Overdrive</h3><span class="status volatile">Volatile</span></div><p>Rewires your neural pathways for faster processing. Think faster, act faster. Risk of synaptic burnout is non-trivial.</p></div>
+                <div class="implant-card anim-element" style="transition-delay: 0.6s;"><div class="implant-header"><h3>Ghost-Weave Skin</h3><span class="status request">On Request</span></div><p>Bio-integrated chameleon cells that mimic surrounding textures. Perfect for infiltration. Requires significant bio-sculpting.</p></div>
+            </div>
+        </section>
+
+        <section id="dossier" class="content-section">
+            <h2 class="section-title anim-element">// DOSSIER: THE PHILOSOPHY</h2>
+            <div class="dossier-grid">
+                <div class="dossier-image anim-element" style="transition-delay: 0.2s;"></div>
+                <div class="dossier-text anim-element" style="transition-delay: 0.4s;">
+                    <h3>More Than Metal</h3>
+                    <p>This isn't about escaping humanity. It's about redefining it. The corporations sell you upgrades that keep you chained to their system—a better cog for their machine. I offer something else: true evolution. The tech I provide is a key to unlocking potential they want to keep locked away.</p>
+                    <p>Every piece is a risk, a statement against the flesh that fails and the systems that control. It's dangerous. It's painful. But true freedom always is. I'm not just selling chrome; I'm selling a choice.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="comms-link" class="content-section">
+            <h2 class="section-title anim-element">// COMMS-LINK: SECURE CHANNEL</h2>
+            <div class="terminal anim-element" style="transition-delay: 0.3s;">
+                <div class="terminal-header">> Establishing connection... STATUS: ENCRYPTED</div>
+                <div class="terminal-body">
+                    <p class="terminal-line">> <span>Protocol:</span> Burner comms only. No names. No locations.</p>
+                    <p class="terminal-line">> <span>Query:</span> State your request. Specify model & grade.</p>
+                    <p class="terminal-line">> <span>Authentication:</span> You will be sent a quantum-encrypted key. If you don't know what to do with it, you are not a client.</p>
+                    <p class="terminal-line">> <span>Warning:</span> Any attempt to trace this channel will result in immediate termination of your hardware. Permanently.</p>
+                    <p class="terminal-line">> STANDING BY FOR QUERY...</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-status">CONNECTION STATUS: <span>SEVERED</span></div>
+        <div class="footer-key">By Cherik // UNAUTHORIZED ACCESS WILL BE PROSECUTED.</div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.addEventListener('contextmenu', event => event.preventDefault());
+            const heroBg = document.querySelector('.hero-bg');
+
+            if (window.matchMedia("(pointer: fine)").matches) {
+                const cursor = document.querySelector('.custom-cursor');
+                const interactiveElements = document.querySelectorAll('a, .btn');
+                const parallaxX = gsap.quickTo(heroBg, "x", { duration: 0.8, ease: "power3.out" });
+                const parallaxY = gsap.quickTo(heroBg, "y", { duration: 0.8, ease: "power3.out" });
+                const cursorX = gsap.quickTo(cursor, "x", { duration: 0.1, ease: "power2.out" });
+                const cursorY = gsap.quickTo(cursor, "y", { duration: 0.1, ease: "power2.out" });
+
+                window.addEventListener("mousemove", e => {
+                    const { clientX, clientY } = e;
+                    const x = (clientX / window.innerWidth - 0.5) * -80;
+                    const y = (clientY / window.innerHeight - 0.5) * -80;
+                    parallaxX(x);
+                    parallaxY(y);
+                    cursorX(clientX);
+                    cursorY(clientY);
+                });
+                
+                interactiveElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => gsap.to(cursor, { scale: 1.5, backgroundColor: 'var(--danger-color)', borderColor: 'var(--danger-color)', duration: 0.3 }));
+                    el.addEventListener('mouseleave', () => gsap.to(cursor, { scale: 1, backgroundColor: 'transparent', borderColor: 'var(--primary-color)', duration: 0.3 }));
+                });
+
+            }
+
+            gsap.from("header", { y: -100, opacity: 0, duration: 1.5, ease: "power3.out" });
+            gsap.from(".hero-bg", { scale: 1.2, opacity: 0, duration: 2.5, ease: "power2.out" });
+            gsap.from(".hero-content > *", { y: 30, opacity: 0, stagger: 0.2, duration: 1.5, ease: "power3.out", delay: 0.5 });
+            
+            const animatedElements = document.querySelectorAll('.anim-element');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            animatedElements.forEach(el => observer.observe(el));
+            
+            const canvas = document.getElementById('rain-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = [];
+            const numberOfParticles = 300;
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.length = Math.random() * 20 + 10;
+                    this.speed = Math.random() * 2 + 1;
+                    this.opacity = Math.random() * 0.5 + 0.2;
+                }
+                update() {
+                    this.y += this.speed;
+                    if (this.y > canvas.height) {
+                        this.y = 0 - this.length;
+                        this.x = Math.random() * canvas.width;
+                    }
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(this.x, this.y + this.length);
+                    ctx.strokeStyle = `rgba(174, 194, 224, ${this.opacity})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+
+            function initParticles() {
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particles.push(new Particle());
+                }
+            }
+            initParticles();
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                }
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                particles = [];
+                initParticles();
+            });
+        });
+    </script>
+</body>
+</html>
